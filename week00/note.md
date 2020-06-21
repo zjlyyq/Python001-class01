@@ -34,5 +34,18 @@
 
 #### venv虚拟环境配置
 
++ 新建虚拟环境
 
+  ```bash
+  python3 -m venv venv2
+  ```
+
++ 进入虚拟环境
+
+  ```bash
+  ➜  MyCode source venv1/bin/activate
+  (venv1) ➜  MyCode
+  ```
+
+  ![](/Users/jialuzhang/MyCode/Python001-class01/week00/截屏2020-06-21 21.09.46.png)
 
