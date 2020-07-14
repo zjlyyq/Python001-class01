@@ -4,6 +4,9 @@ import ping3
 from multiprocessing import Process, Queue, Lock
 from multiprocessing.pool import Pool
 import os
+import random
+import time
+import subprocess
 # from utils import ping_by_ping3
 
 # parser cimmond ling argumnts
@@ -13,32 +16,29 @@ parser.add_argument('-n', type=int, default="4", nargs="?", help="the number of 
 parser.add_argument('-ip', default="4", required=True, nargs="?", help="ip range e.g. 192.168.1.0-192.168.1.255 or a single ip address")
 parser.add_argument('-w', default="result.json", nargs="?", help="result writen to a file")
 
-
-def run(name):
-    print("%s子进程开始，进程ID：%d" % (name, os.getpid()))
-    start = time()
-    sleep(random.choice([1, 2, 3, 4]))
-    end = time()
-    print("%s子进程结束，进程ID：%d。耗时%0.2f" % (name, os.getpid(), end-start))
-
 # ip, ip_status, lock
-def ping_by_ping3(t):
-    print(f'进程{t[0]}开始， 进程号：{os.getpid()}')
-    # r = ping3.ping(ip)
-    # lock.acquire()
-    # if r:
-    #     ip_status.put({ip: "arrival"})
-    # else:
-    #     ip_status.put({ip: "not arrival"})
-    # lock.release()
-    print(f'进程{t[0]}结束， 进程号：{os.getpid()}')
+def ping_by_ping3(p_id, ip, ip_status, lock):
+    time.sleep(1)
+    print(f'进程{p_id}开始，ip = {ip} 进程号：{os.getpid()}')
+    # r = subprocess.call(ping3.ping(ip), stdout=subprocess.PIPE)
+    # r = subprocess.call('ping -c 2 -w 5 %s' % ip, stdout=subprocess.PIPE)  # linux 系统将 '-n' 替换成 '-c'
+    r = ping3.ping(ip)
+    time.sleep(1)
+    print(r)
+    lock.acquire()
+    if r:
+        ip_status.put({ip: "arrival"})
+    else:
+        ip_status.put({ip: "not arrival"})
+    lock.release()
+    print(f'进程{p_id}结束， 进程号：{os.getpid()}')
 
 if __name__ == "__main__": 
     argc = parser.parse_args()
     ip_range = argc.ip.split('-')
     op_type = argc.f
     print(ip_range, op_type)
-    p = Pool(2)
+    p = Pool(4)
     print(p)
     lock = Lock()
     process_id = 0
@@ -49,22 +49,20 @@ if __name__ == "__main__":
             for ip3 in range(int(ip_range[0].split('.')[2]), int(ip_range[1].split('.')[2])+1):
                 for ip4 in range(int(ip_range[0].split('.')[3]), int(ip_range[1].split('.')[3])+1):
                     cur_ip = str(ip1) + '.' + str(ip2) + '.' + str(ip3) + '.' + str(ip4)
-                    print(cur_ip)
+                    # print(cur_ip)
                     process_id += 1
                     # p.apply_async(run, args=(process_id,))
-                    # plist.append(Process(target=ping_by_ping3, args=(process_id, cur_ip, ip_status, lock)))
-                    p.apply_async(ping_by_ping3, args=((process_id, cur_ip, ip_status ,lock, )))
-                    # plist[process_id-1].start()
+                    plist.append(Process(target=ping_by_ping3, args=(process_id, cur_ip, ip_status, lock)))
+                    #  cur_ip, ip_status, lock
+                    p.apply_async(ping_by_ping3, args=(process_id, cur_ip))
+                    plist[process_id-1].start()
                     # plist[process_id-1].join()
-    print('hhh')
-    p.close()
-    print('hhh2')
-    p.join()
-    print('hhh3')
+    # p.close()
+    # p.join()
     # p.terminate()
-    print('hhh4')
+    for p1 in plist:
+        p1.join()
     result = ip_status.get(timeout=3)
-    print('hhh5')
     while result:
         print(result)
         try:
