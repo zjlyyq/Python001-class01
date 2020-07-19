@@ -19,4 +19,27 @@
 
 10. ALTER TABLE table1 DROP COLUMN column_name;
 '''
+import numpy as np
+import pandas as pd
+
+group = ['x', 'y', 'z']
+df = pd.DataFrame({
+    "id": [i for i in range(100)],
+    "group":[group[x] for x in np.random.randint(0,len(group),100)] ,
+    "salary":np.random.randint(5,50,100),
+    "age":np.random.randint(15,50,100)
+})
+# print(df)
+
+# SELECT * FROM data;
+df
+
+# SELECT * FROM data LIMIT 10;
+print(df.loc[0:9])
+
+# SELECT id FROM data;  //id 是 data 表的特定一列
+id = 10
+print(df.loc[id])
+
+# SELECT COUNT(id) FROM data;
 
