@@ -24,15 +24,27 @@ woman.live
 
 # 类可以使用静态字段
 Human.live
+woman.live = False
+woman.live
+woman.__dict__
 
 # 可以为类添加静态字段
 Human.newattr = 1
 dir(Human)
+dir(woman)
+# woman.__dir__()
 Human.__dict__
 
 # 内置类型不能增加属性和方法
 setattr(list, 'newattr', 'value')
 # TypeError
+# 可以使用这种方法增加属性和方法
+setattr(Human, 'age', 20)
+me = Human('zhang san')
+dir(Human)
+dir(me)
+me.age
 
 # 显示object类的所有子类
 print( ().__class__.__bases__[0].__subclasses__() )
+
