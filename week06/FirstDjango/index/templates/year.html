@@ -1,0 +1,17 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div><a href="/2020.html">2020 booklist</a></div>
+{% url 'urlyear' 2020 %}
+<div><a href="{% url 'urlyear' 2020 %}">2020 booklist</a></div>
+
+<div>
+    {% for t in ylist %}
+        <p>{{ t }}</p>
+    {% endfor %}
+    <img src="{% static 'imgs/截屏2020-08-02 18.34.17.png'%}" alt="" srcset="">
+</div>
+</body>

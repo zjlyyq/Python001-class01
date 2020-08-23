@@ -1,0 +1,20 @@
+# GOD
+class Human(object):
+    def __init__(self, name):
+        self.name = name
+
+    # 将方法封装成属性
+    @property
+    def gender(self):
+        return 'M'
+    
+    # 支持修改
+    @gender.setter
+    def gender(self, value):
+        self.gender = value
+
+p1 = Human('zhang san')
+p1.gender
+p1.gender = 'F'
+
+
